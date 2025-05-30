@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-2xl shadow-2xl w-80">
+        <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">Calculator</h1>
+        <input type="text" id="display"
+            class="w-full mb-4 text-right p-3 text-xl border rounded-lg bg-gray-100 text-gray-900" placeholder="0"
+            disabled />
+
+        <div class="grid grid-cols-4 gap-3">
+            <button class="btn">7</button>
+            <button class="btn">8</button>
+            <button class="btn">9</button>
+            <button class="btn operator">/</button>
+
+            <button class="btn">4</button>
+            <button class="btn">5</button>
+            <button class="btn">6</button>
+            <button class="btn operator">*</button>
+
+            <button class="btn">1</button>
+            <button class="btn">2</button>
+            <button class="btn">3</button>
+            <button class="btn operator">-</button>
+
+            <button class="btn">0</button>
+            <button class="btn">.</button>
+            <button class="btn clear text-red-500 font-bold">C</button>
+            <button class="btn operator">+</button>
+
+            <button
+                class="btn-equal col-span-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg mt-2">=</button>
+        </div>
+    </div>
+
+    <style>
+        .btn {
+            @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded-lg;
+        }
+    </style>
+
+    <script>
+        const buttons = document.querySelectorAll('.btn');
+        const equalButton = document.querySelector('.btn-equal');
+        const clearButton = document.querySelector('.clear');
+        const display = document.getElementById('display');
+        let input = '';
+        let result = 0;
+
+        function isOperator(char) {
+            return ['+', '-', '*', '/'].includes(char);
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const value = button.textContent;
+
+                if (isOperator(value)) {
+                    if (input === '' || isOperator(input.slice(-1))) {
+                        return; // Prevent two consecutive operators
+                    }
+                }
+
+                input += value;
+                display.value = input;
+            });
+        });
+
+        clearButton.addEventListener('click', () => {
+            input = '';
+            display.value = '';
+        });
+
+        equalButton.addEventListener('click', () => {
+            try {
+                if (input === '' || isOperator(input.slice(-1))) {
+                    display.value = 'Error';
+                    return;
+                }
+                result = eval(input);
+                display.value = result;
+                input = result.toString(); // Allow chaining calculations
+            } catch (e) {
+                display.value = 'Error';
+                input = '';
+            }
+        });
+    </script>
+</body>
+
+</html>

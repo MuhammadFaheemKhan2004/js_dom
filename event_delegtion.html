@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Event Delegation Visual</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-6 rounded-xl shadow-lg w-80">
+    <h1 class="text-xl font-bold text-center text-gray-800 mb-4">Classroom (Parent)</h1>
+
+    <div id="classroom" class="space-y-2">
+      <button class="student w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Student A</button>
+      <button class="student w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Student B</button>
+      <button class="student w-full bg-pink-500 text-white py-2 rounded hover:bg-pink-600">Student C</button>
+    </div>
+  </div>
+
+  <script>
+    const classroom = document.getElementById('classroom');
+
+    // 👂 One parent listener
+    classroom.addEventListener('click', function(event) {
+      // 📌 Check if clicked element is a student
+      if (event.target.classList.contains('student')) {
+        const clickedName = event.target.textContent;
+        alert(`You clicked: ${clickedName}`);
+        console.log('event.target:', event.target);          // The actual button clicked
+        console.log('event.currentTarget:', event.currentTarget); // Always #classroom (the parent)
+      }
+    });
+  </script>
+
+</body>
+</html>

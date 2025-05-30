@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div class="main flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="one bg-blue-500 w-100 h-100 mb-4 shadow-lg flex items-center justify-center">
+            <h1>one</h1>
+
+            <div class="two bg-green-500 w-60 h-40 mb-4 shadow-lg flex items-center justify-center">
+                <h2>two</h2>
+
+                <div class="three bg-cyan-500 w-30 h-20 mb-4 shadow-lg flex items-center justify-center">
+                    <h3>three</h3>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const one = document.querySelector('.one');
+        const two = document.querySelector('.two');
+        const three = document.querySelector('.three');
+
+        one.addEventListener('click', (event) => {
+            // event.stopPropagation();
+            one.classList.toggle('bg-red-500');
+            console.log('Clicked on one');
+            console.log('event.target:', event.target);
+            console.log('event.currentTarget:', event.currentTarget);
+        }, true);
+
+        two.addEventListener('click', (event) => {
+            //event.stopPropagation();
+            two.classList.toggle('bg-yellow-500');
+            console.log('Clicked on two');
+            console.log('event.target:', event.target);
+            console.log('event.currentTarget:', event.currentTarget);
+        }, true);
+
+        three.addEventListener('click', (event) => {
+            // event.stopPropagation();
+            three.classList.toggle('bg-purple-500');
+            console.log('Clicked on three');
+            console.log('event.target:', event.target);
+            console.log('event.currentTarget:', event.currentTarget);
+        }, true);
+    </script>
+
+
+
+</body>
+
+</html>

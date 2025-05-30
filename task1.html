@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-white transition-colors duration-300" id="body">
+    <!-- Dark Mode Toggle -->
+    <div class="flex justify-end p-4">
+        <button id="darkModeToggle" class="bg-gray-800 text-white px-4 py-2 rounded">Dark Mode</button>
+    </div>
+
+    <!-- Heading -->
+    <div class="heading bg-cyan-500 flex justify-center items-center h-20">
+        <h1 class="text-3xl font-bold text-gray-800">Let's do Comments</h1>
+    </div>
+
+    <!-- All Comments Section -->
+    <div class="allcomments flex flex-col items-center my-4">
+        <h1 class="text-2xl font-semibold text-gray-800 mb-2">All Comments</h1>
+        <ul id="commentList" class="text-gray-700 list-disc w-3/4"></ul>
+    </div>
+
+    <!-- New Comment Section -->
+    <div class="newcomment flex justify-center items-center h-20">
+        <h1 class="text-xl font-semibold text-gray-800">New Comment</h1>
+        <input type="text" class="ml-4 p-2 border border-gray-300 rounded-lg" placeholder="Type your comment here...">
+        <button class="ml-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" id="submit">Submit</button>
+    </div>
+
+    <script>
+        let comments = JSON.parse(localStorage.getItem('comments')) || [];
+        
+
+        const submitBtn = document.getElementById('submit');
+        const inputField = document.querySelector('.newcomment input');
+        const commentList = document.getElementById('commentList');
+        const body = document.getElementById('body');
+        const darkModeToggle = document.getElementById('darkModeToggle');
+
+        // Save comments to localStorage
+        function saveComments() {
+            localStorage.setItem('comments', JSON.stringify(comments));
+        }
+
+        submitBtn.addEventListener('click', () => {
+            let input = inputField.value.trim();
+            if (input === '') {
+                alert('Please enter a comment');
+                return;
+            }
+
+            comments.push({ text: input, replies: [] });
+            inputField.value = '';
+            saveComments();
+            renderComments();
+        });
+
+        function renderComments() {
+            commentList.innerHTML = '';
+            comments.forEach((comment, index) => {
+                const li = document.createElement('li');
+                li.classList.add('mb-4', 'bg-gray-100', 'p-2', 'rounded', 'shadow');
+
+                li.innerHTML = `
+                    <div>
+                        <span class="cursor-pointer font-medium text-gray-800 comment-text" data-index="${index}">${comment.text}</span>
+                        <button data-index="${index}" class="ml-4 text-red-600 hover:underline delete-btn">Delete</button>
+                    </div>
+                    <ul class="reply-list mt-2 ml-6 text-sm text-gray-700">
+                        ${comment.replies.map(reply => renderNestedReply(reply)).join('')}
+                    </ul>
+                `;
+
+                commentList.appendChild(li);
+            });
+        }
+
+        function renderNestedReply(reply) {
+            if (typeof reply === 'string') {
+                return `<li class="mb-1">↳ ${reply}</li>`;
+            } else {
+                return `
+                    <li class="mb-1">
+                        ↳ ${reply.text}
+                        <ul class="ml-4">${(reply.replies || []).map(r => renderNestedReply(r)).join('')}</ul>
+                    </li>
+                `;
+            }
+        }
+
+        commentList.addEventListener('click', function (event) {
+            const index = event.target.getAttribute('data-index');
+
+            if (event.target.classList.contains('delete-btn')) {
+                comments.splice(index, 1);
+                saveComments();
+                renderComments();
+                return;
+            }
+
+            if (event.target.classList.contains('comment-text')) {
+                const li = event.target.closest('li');
+                const existing = document.querySelector('.reply-input-box');
+                if (existing) existing.remove();
+
+                const replyBox = document.createElement('div');
+                replyBox.classList.add('reply-input-box', 'mt-2');
+                replyBox.innerHTML = `
+                    <input type="text" placeholder="Write a reply..." class="reply-input border border-gray-300 rounded px-2 py-1 mr-2" />
+                    <button class="reply-submit bg-green-500 text-white px-2 py-1 rounded" data-index="${index}">Reply</button>
+                `;
+
+                li.appendChild(replyBox);
+            }
+
+            if (event.target.classList.contains('reply-submit')) {
+                const replyIndex = event.target.getAttribute('data-index');
+                const replyInput = event.target.previousElementSibling;
+                const replyText = replyInput.value.trim();
+
+                if (replyText === '') {
+                    alert('Please enter a reply');
+                    return;
+                }
+
+                comments[replyIndex].replies.push({ text: replyText, replies: [] });
+                saveComments();
+                renderComments();
+            }
+        });
+
+        // Toggle dark mode
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('bg-white');
+            body.classList.toggle('bg-gray-900');
+            body.classList.toggle('text-white');
+        });
+
+        renderComments();
+    </script>
+</body>
+
+</html>
