@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌦 Weather App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gradient-to-br from-blue-100 to-blue-300 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white shadow-xl rounded-2xl p-8 max-w-md w-full space-y-6 text-center">
+        <h1 class="text-3xl font-bold text-blue-700">🌤 Weather App</h1>
+
+        <input id="cityInput" type="text" placeholder="Enter city name..."
+            class="w-full p-3 border rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+        <button id="fetchBtn"
+            class="bg-blue-600 text-white px-6 py-2 rounded-xl text-lg hover:bg-blue-700 transition duration-200">
+            Get Weather
+        </button>
+
+        <div id="output" class="text-left bg-gray-100 p-4 rounded-xl text-gray-700 whitespace-pre-line min-h-[100px]">
+            🌎 Enter a city name to get weather.
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "4ddd91aa44ac8043b7cfa317fb51d3ff"; // ← Replace with your OpenWeatherMap API key
+
+        const cityInput = document.getElementById("cityInput");
+        const fetchBtn = document.getElementById("fetchBtn");
+        const output = document.getElementById("output");
+
+        fetchBtn.addEventListener("click", () => {
+            const city = cityInput.value.trim();
+
+            if (!city) {
+                output.textContent = "⚠️ Please enter a city name.";
+                return;
+            }
+
+            output.textContent = "⏳ Fetching weather data...";
+
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    console.log("1️⃣ Fetched response");
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("2️⃣ Parsed JSON");
+                    output.textContent = `🌍 Weather in ${data.name}, ${data.sys.country}\n`;
+                    return data.main.temp;
+                })
+                .then(temp => {
+                    console.log("3️⃣ Extracted Temp");
+                    output.textContent += `🌡 Temperature: ${temp} °C\n`;
+                    return temp + 5;
+                })
+                .then(modifiedTemp => {
+                    console.log("4️⃣ Modified Temp");
+                    output.textContent += `🧪 Simulated Adjusted Temp: ${modifiedTemp} °C`;
+                })
+                .catch(error => {
+                    console.error("❌ Error:", error);
+                    output.textContent = "❌ Failed to fetch data: " + error.message;
+                });
+        });
+    </script>
+</body>
+
+</html>
